@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-01-29T18:02:23.449599",
+  "cache_stats": {
+    "hits": 0,
+    "misses": 0,
+    "total": 0,
+    "hit_rate": "0.0%",
+    "cached_items": 0,
+    "size_estimate_mb": 0.0
+  },
+  "bot_stats": {
+    "latency": NaN,
+    "servers": 0,
+    "users": 0
+  }
+}

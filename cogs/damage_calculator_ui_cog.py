@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 from discord.ui import View, Select, Button, Modal, TextInput
 import json
-from damage_calculator import DamageCalculator, BuildDamageAnalyzer
+from damage_calculator import DamageCalculator
 from typing import Dict, Optional
 
 class DamageCalculatorModal(Modal):

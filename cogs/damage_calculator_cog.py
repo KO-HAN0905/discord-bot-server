@@ -5,7 +5,7 @@ Discord 봇용 대미지 계산기 Cog
 
 import discord
 from discord.ext import commands
-from damage_calculator import DamageCalculator, BuildDamageAnalyzer, format_damage_result
+from damage_calculator import DamageCalculator
 import json
 
 class DamageCalculatorCog(commands.Cog):
@@ -14,7 +14,6 @@ class DamageCalculatorCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.calculator = DamageCalculator()
-        self.analyzer = BuildDamageAnalyzer(self.calculator)
     
     @commands.command(name='대미지', aliases=['damage', '피해', 'dps'])
     @commands.cooldown(1, 3, commands.BucketType.user)
@@ -168,57 +167,6 @@ class DamageCalculatorCog(commands.Cog):
         embed.set_footer(text="대미지 계산 v1.0")
         
         await ctx.send(embed=embed)
-    
-    @commands.command(name='빌드비교')
-    @commands.cooldown(1, 3, commands.BucketType.user)
-    async def compare_builds(self, ctx, *build_names):
-        """
-        여러 빌드를 비교합니다.
-        
-        사용법:
-        !빌드비교 "극대율 풀극" "데저트이글 백상아리 크리"
-        """
-        
-        if not build_names or len(build_names) < 2:
-            await ctx.send("❌ 최소 2개 이상의 빌드를 지정해주세요.\n"
-                          "예: `!빌드비교 \"극대율 풀극\" \"데저트이글 백상아리 크리\"`")
-            return
-        
-        # 빌드 확인
-        all_builds = self.analyzer.get_all_builds()
-        valid_builds = []
-        invalid_builds = []
-        
-        for build in build_names:
-            if build in all_builds:
-                valid_builds.append(build)
-            else:
-                invalid_builds.append(build)
-        
-        if invalid_builds:
-            embed = discord.Embed(
-                title="⚠️ 일부 빌드를 찾을 수 없습니다",
-                description=f"찾을 수 없는 빌드: {', '.join(invalid_builds)}",
-                color=discord.Color.orange()
-            )
-            await ctx.send(embed=embed)
-        
-        if not valid_builds:
-            return
-        
-        # 비교
-        results = self.analyzer.compare_builds(valid_builds, enemy_level=25)
-        
-        embed = discord.Embed(
-            title="⚔️ 빌드 비교",
-            color=discord.Color.purple()
-        )
-        
-        # 비교 테이블
-        comparison = ""
-        comparison += "```\n"
-        comparison += f"{'빌드명':<25} {'DPS':>10} {'최종피해':>10}\n"
-        comparison += "-" * 50 + "\n"
         
         for result in results:
             build_name = result.get('build_name', '')[:23]
@@ -234,29 +182,6 @@ class DamageCalculatorCog(commands.Cog):
         embed.add_field(
             name="🏆 최고 DPS",
             value=f"{top_build.get('build_name')}: {top_build.get('dps', 0):,.0f}",
-            inline=False
-        )
-        
-        await ctx.send(embed=embed)
-    
-    @commands.command(name='빌드목록')
-    async def list_builds(self, ctx):
-        """사용 가능한 빌드 목록"""
-        builds = self.analyzer.get_all_builds()
-        
-        embed = discord.Embed(
-            title="📚 사용 가능한 빌드",
-            description="다음 빌드들을 계산할 수 있습니다:",
-            color=discord.Color.green()
-        )
-        
-        builds_text = "\n".join([f"• {build}" for build in builds])
-        embed.add_field(name="빌드 목록", value=builds_text, inline=False)
-        
-        embed.add_field(
-            name="사용법",
-            value="`!대미지 \"빌드명\"`\n"
-                  "`!빌드비교 \"빌드1\" \"빌드2\"`",
             inline=False
         )
         
