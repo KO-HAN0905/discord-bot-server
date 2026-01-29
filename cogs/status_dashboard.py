@@ -20,7 +20,7 @@ class StatusDashboard(commands.Cog):
     @commands.command(name='상태', aliases=['status', 'health'])
     @commands.cooldown(1, 10, commands.BucketType.user)
     @advanced_error_handler
-    async def bot_status(self, ctx):
+    async def check_status(self, ctx):
         """봇 상태 확인"""
         
         # CPU 및 메모리
